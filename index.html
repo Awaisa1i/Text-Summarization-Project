@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarization Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        textarea {
+            width: 90%;
+            height: 150px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Summarization</h1>
+    <form id="summarization-form">
+        <textarea id="input-text" placeholder="Enter text to summarize..."></textarea><br>
+        <button type="submit">Summarize</button>
+    </form>
+    <div id="summary-output" class="summary"></div>
+
+    <script>
+        document.getElementById('summarization-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const text = document.getElementById('input-text').value;
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "text": text })
+            });
+
+            const result = await response.json();
+
+            if (result.summary) {
+                document.getElementById('summary-output').innerText = result.summary;
+            } else if (result.error) {
+                document.getElementById('summary-output').innerText = `Error: ${result.error}`;
+            } else {
+                document.getElementById('summary-output').innerText = 'Unexpected error occurred';
+            }
+        });
+    </script>
+</body>
+</html>

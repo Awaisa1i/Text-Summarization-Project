@@ -1,48 +1,30 @@
 from fastapi import FastAPI
 import uvicorn
-import sys
-import os
-from fastapi.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from fastapi.responses import Response
+from fastapi.responses import HTMLResponse, JSONResponse
 from textSummarizer.pipeline.prediction import PredictionPipeline
+from pydantic import BaseModel
 
 
-text:str = "What is Text Summarization?"
+class TextInput(BaseModel):
+    text: str
+
 
 app = FastAPI()
 
-@app.get("/", tags=["authentication"])
+@app.get("/", response_class=HTMLResponse)
 async def index():
-    return RedirectResponse(url="/docs")
-
-
-
-@app.get("/train")
-async def training():
-    try:
-        os.system("python main.py")
-        return Response("Training successful !!")
-
-    except Exception as e:
-        return Response(f"Error Occurred! {e}")
-    
-
+    # Serve the index.html directly from the same directory as app.py
+    with open("index.html") as f:
+        return HTMLResponse(content=f.read())
 
 @app.post("/predict")
-async def predict_route(text):
+async def predict_route(text: TextInput):
     try:
-
         obj = PredictionPipeline()
-        text = obj.predict(text)
-        return text
+        summary = obj.predict(text.text)
+        return JSONResponse({"summary": summary})
     except Exception as e:
-        raise e
-    
+        return JSONResponse({"error": str(e)}, status_code=500)
 
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)
-
-    
