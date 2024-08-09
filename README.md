@@ -16,4 +16,4 @@
 3. pip install -r requirement.txt
 4. uvicorn app:app --reload
 
-##Thanks me later 😄 
+## Thank me later 😄 
