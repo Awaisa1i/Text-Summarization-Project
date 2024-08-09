@@ -9,3 +9,11 @@
 6. Update the pipeline
 7. Update the main.py
 8. Update the app.py
+
+## How to run this project?
+1. Open your terminal
+2. Write conda acticvate venv
+3. pip install -r requirement.txt
+4. uvicorn app:app --reload
+
+##Thanks me later 😄 
